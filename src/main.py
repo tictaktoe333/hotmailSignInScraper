@@ -1,21 +1,18 @@
-import yaml
-import mhtmlpy
-from bs4 import BeautifulSoup
+import re
+import ipaddress
 
 
 if __name__ == "__main__":
-    mhtml_file = '~/input_mhtmls/aug_2024.mhtml'
-
-    table_x_path = "/html/body/div[1]/div[3]/div/div[1]/div[1]/form/section[2]/div[2]"
-    ip_x_path = "//*[@id="activity0"]/div/div[2]/div[3]/span/span[2]"
-    full_ip_x_path = "/html/body/div[1]/div[3]/div/div[1]/div[1]/form/section[2]/div[2]/div[1]/div/div/div[2]/div[3]/span/span[2]"
-
-    with open(mhtml_file, 'rb') as f:
-        mhtml_content = f.read()
-        parser = mhtmlpy.MHTMLParser(mhtml_content)
-        html_content = parser.main_content()
-        soup = BeautifulSoup(html_content, 'html.parser')
-
-        # Example: Extract all links
-        for link in soup.find_all('a'):
-            print(link.get('href'))
+    mhtml_file = "./file.mhtml"
+    ip_start_sequence = '<span data-bind=3D"text: ip">'
+    with open(mhtml_file, 'r') as f:
+        mhtml_content = f.readlines()
+        for line in mhtml_content:
+            try:
+                if re.search(ip_start_sequence, line) is not None:
+                    target_ip_address = line.split(ip_start_sequence)[1]
+                    target_ip_address = target_ip_address.split("<")[0]
+                    ipaddress.IPv4Address(target_ip_address)
+                    print(target_ip_address)
+            except ValueError as exc:
+                continue
