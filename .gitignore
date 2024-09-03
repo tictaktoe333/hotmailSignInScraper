@@ -1,3 +1,5 @@
+.vscode
+.venv
 *.html
 *.mhtml
 config.yaml
